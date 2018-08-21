@@ -3,21 +3,17 @@ import os
 from google.cloud import datastore
 from google.cloud import storage
 import g_cloud_key.json
-
+import vision
 app = Flask(__name__, static_url_path='')
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))
 
+# client = datastore.Client()
+# key = client.key('Person')
 
-client = datastore.Client()
-key = client.key('Person')
-
-entity = datastore.Entity(key=key)
-entity['name'] = 'Your name'
-entity['age'] = 25
-client.put(entity)
-
-
-#!/usr/bin/python
+# entity = datastore.Entity(key=key)
+# entity['name'] = 'Your name'
+# entity['age'] = 25
+# client.put(entity)
 
 import boto
 import gcs_oauth2_boto_plugin
@@ -32,34 +28,8 @@ GOOGLE_STORAGE = 'gs'
 # URI scheme for accessing local files.
 LOCAL_FILE = 'file'
 
-# Fallback logic. In https://console.cloud.google.com/
-# under Credentials, create a new client ID for an installed application.
-# Required only if you have not configured client ID/secret in
-# the .boto file or as environment variables.
-
-
-def upload_blob(bucket_name, source_file_name, destination_blob_name):
-    """Uploads a file to the bucket."""
-    storage_client = storage.Client()
-    bucket = storage_client.get_bucket(bucket_name)
-    blob = bucket.blob(destination_blob_name)
-
-    blob.upload_from_filename(source_file_name)
-
-
-        
 client = storage.Client()
-bucket = client.create_bucket('first')
-
-
-def generate_t(linktoimage):
-    
-
-
-@app.route('/')
-def index():
-    return render_template('index.html')
-
+bucket = client.get_bucket('first123123123')
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
@@ -72,13 +42,7 @@ def upload():
         dst_uri.new_key().set_contents_from_file(file)
         flash('Successfully Uploaded Image', 'success')
         linktoimage = 'gs://first/'+filename
-        translation = generate_t(filename)
-        return render_template('uploaded.html', {linktoimage, translation})
-    return render_template('upload.html')
-
-
-    
-
+        translation = vision.generate_t(filename)
 
 if __name__ == '__main__':
     app.debug = True
